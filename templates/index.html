@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Credit Score Prediction</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <div class="card">
+        <div class="card-header">
+            <h1>Credit Score Prediction</h1>
+            <p class="subtitle">
+                Enter basic financial details to estimate if an applicant is likely to have
+                <b>Good</b> or <b>Bad</b> credit behavior.
+            </p>
+            <div class="badge">
+                <span class="badge-dot"></span>
+                Real model trained on credit risk data
+            </div>
+        </div>
+
+        <form id="credit-form">
+            <div class="field">
+                <label for="age">Age</label>
+                <input type="number" id="age" placeholder="e.g., 32" min="18" max="100" />
+                <span class="hint">Applicant age in years (18 – 100).</span>
+            </div>
+
+            <div class="field">
+                <label for="income">Monthly Income (₹)</label>
+                <input type="number" id="income" placeholder="e.g., 60000" min="0" />
+                <span class="hint">Total monthly income before taxes.</span>
+            </div>
+
+            <div class="field">
+                <label for="num_open_accounts">Number of Open Credit Lines / Loans</label>
+                <input type="number" id="num_open_accounts" placeholder="e.g., 4" min="0" />
+                <span class="hint">Includes credit cards, car loans, personal loans, etc.</span>
+            </div>
+
+            <div class="field">
+                <label for="late_30_59">Late Payments (30-59 days past due, last 2 years)</label>
+                <input type="number" id="late_30_59" placeholder="e.g., 1" min="0" />
+                <span class="hint">How many times payments were 30-59 days late.</span>
+            </div>
+
+            <div class="field">
+                <label for="credit_utilization">Credit Utilization (%)</label>
+                <input type="number" id="credit_utilization" placeholder="e.g., 35" min="0" max="150" />
+                <span class="hint">Used credit ÷ total credit limit × 100. Ideally &lt; 50%.</span>
+            </div>
+
+            <div id="live-risk" class="live-risk"></div>
+
+            <div class="btn-row">
+                <button type="button" id="sample-good" class="btn-ghost">Fill Good Profile</button>
+                <button type="button" id="sample-bad" class="btn-ghost">Fill Risky Profile</button>
+            </div>
+
+            <div class="btn-row">
+                <button type="submit" id="submit-btn" class="btn-primary">
+                    Predict
+                </button>
+            </div>
+        </form>
+
+        <div id="result" class="result">
+            <div class="result-title">Prediction Result</div>
+            <div id="status-pill" class="score-pill">
+                <span id="status-text">–</span>
+            </div>
+
+            <!-- SPEEDOMETER -->
+            <div class="gauge-wrapper">
+                <svg viewBox="0 0 200 120" class="gauge">
+                    <defs>
+                        <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#ef4444" />
+                            <stop offset="50%" stop-color="#f97316" />
+                            <stop offset="100%" stop-color="#22c55e" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- background arc -->
+                    <path d="M20 100 A80 80 0 0 1 180 100"
+                          fill="none"
+                          stroke="#e2e8f0"
+                          stroke-width="14"
+                          stroke-linecap="round" />
+
+                    <!-- colored arc -->
+                    <path id="gauge-arc"
+                          d="M20 100 A80 80 0 0 1 180 100"
+                          fill="none"
+                          stroke="url(#gaugeGradient)"
+                          stroke-width="14"
+                          stroke-linecap="round"
+                          stroke-dasharray="0 251.2" />
+
+                    <!-- needle -->
+                    <line id="gauge-needle"
+                          x1="100" y1="100" x2="100" y2="30"
+                          stroke="#020617"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          transform="rotate(-90 100 100)" />
+
+                    <circle cx="100" cy="100" r="5" fill="#020617" />
+                </svg>
+
+                <div class="gauge-center">
+                    <div id="gauge-value" class="gauge-value">--%</div>
+                    <div id="gauge-label" class="gauge-label">No prediction yet</div>
+                </div>
+            </div>
+
+            <p class="probability-text">
+                Probability of <b>Good</b> credit:
+                <span class="probability-value" id="prob-value">–</span>
+            </p>
+        </div>
+
+        <div class="footer">
+            Educational demo • Not financial advice
+        </div>
+    </div>
+
+    <!-- FLASK: load JS -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
